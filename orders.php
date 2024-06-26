@@ -1,0 +1,246 @@
+<?php
+error_reporting(E_ERROR | E_PARSE);
+ $servername = "localhost";
+ $username = "root";
+ $password = "";
+ $dbname = "quickbite";
+ 
+ $conn = new mysqli($servername, $username, $password, $dbname);
+ 
+ if ($conn->connect_error) {
+     die("Connection failed: " . $conn->connect_error);
+ }
+ $ORDER_ID=array();
+$CUS_ID=array();
+$ORDER_DATE = array();
+$TOTAL_AMOUNT = array();
+
+$sql = "SELECT `ORDER_ID`, `CUS_ID`, `ORDER_DATE`, `TOTAL_AMOUNT` FROM `orders`";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $ORDER_ID[] = $row['ORDER_ID'];
+        $CUS_ID[] = $row['CUS_ID'];
+        $ORDER_DATE[] = $row['ORDER_DATE'];
+        $TOTAL_AMOUNT[] = $row['TOTAL_AMOUNT'];
+      
+    }
+}
+
+//remove
+if (isset($_POST['remove_msg'])) {
+    $message_id_here = $_POST['remove_msg'];
+    $remove_query = "DELETE FROM message WHERE  ORDER_ID = '$message_id_here'";
+    
+    if ($conn->query($remove_query) === TRUE) {
+        // Item removed successfully, you can redirect or refresh the page here
+        header("location:orders.php");
+        exit();
+    } }
+
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<style>
+   
+
+h1 {
+
+  font-size: 30px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tbl-header {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.tbl-content {
+  height: 300px;
+  overflow-x: auto;
+  margin-top: 0px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+th {
+  padding: 20px 15px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 15px;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+body {
+  background: #6e6368;
+  font-family: 'Roboto', sans-serif;
+}
+
+section {
+  margin: 50px;
+}
+
+.made-with-love {
+  margin-top: 40px;
+  padding: 10px;
+  clear: left;
+  text-align: center;
+  font-size: 10px;
+  font-family: arial;
+  color: #fff;
+}
+
+.made-with-love i {
+  font-style: normal;
+  color: #F50057;
+  font-size: 14px;
+  position: relative;
+  top: 2px;
+}
+nav {padding-left: 40px;
+ }
+ 
+ nav ul {
+   list-style-type: none;
+   margin: 0;
+   padding: 0;
+   display: flex;
+  
+ }
+ 
+ nav li {
+   margin: 0 10px;
+ }
+ 
+ nav li a {
+   display: block;
+   color: #fff;
+   text-decoration: none;
+   padding: 10px;
+   border-radius: 4px;
+   transition: background-color 0.3s ease;
+ }
+ 
+ nav li a:hover {
+   background-color: #555;
+   text-decoration: none;
+   color: #fff;
+ }
+
+ .vl {
+   border-left: 2px solid rgb(65, 65, 65);
+   height: 32px;
+ }
+
+.made-with-love a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.made-with-love a:hover {
+  text-decoration: underline;
+}
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+</style>
+    <title>Admin page</title>
+
+
+<h1 style="color:white;font-family:Bradley Hand, cursive; padding-left:20px;  padding-top:30px; padding-bottom:30px;">Quickbite Admin</h1>
+<nav>
+        <ul>
+            <li><a href="admin.php">massages</a></li>
+            <li><a href="ADD.php">Add product</a></li>
+            <li><a href="orders.php">Orders</a></li>
+
+            <div class="vl"></div>
+        </ul>
+        <hr>
+    </nav>
+    
+
+
+<section>
+
+  <h1>The orders </h1>
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <thead>
+        <tr>
+          <th>Order_id</th>
+          <th>Customer_id</th>
+          <th>Order date</th>
+          <th>Total amount</th>
+          <th>Remove</th>
+         
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="tbl-content">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <tbody>
+        <?php 
+         for ($i = 0;$i < count($ORDER_ID); $i++) {
+        echo"
+        <tr>
+        <td>".$ORDER_ID[$i]."</td>
+          <td>".$CUS_ID[$i]."</td>
+          <td>".$ORDER_DATE[$i]."</td>
+          <td>".$TOTAL_AMOUNT[$i]."</td>
+          <td> <form method='post' action='admin.php'>
+          <input type='hidden' name='remove_msg' value='".$ORDER_ID[$i]."'>
+          <button class='btn btn-outline-danger' type='submit' style='color:black;'>REMOVE</button>
+      </form></td>
+          
+        </tr> ";
+        }
+     ?>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+
+
+</body>
+</html>
